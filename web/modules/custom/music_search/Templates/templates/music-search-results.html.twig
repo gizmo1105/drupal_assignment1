@@ -1,0 +1,9 @@
+<div class="music-search-results">
+  {% for item in results %}
+    <div class="music-search-item">
+      <h3>{{ item.title }}</h3>
+      <p>Artist: {{ item.artist }}</p>
+      <a href="{{ item.link }}">More details</a>
+    </div>
+  {% endfor %}
+</div>

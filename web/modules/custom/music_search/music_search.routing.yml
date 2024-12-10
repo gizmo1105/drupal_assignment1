@@ -1,0 +1,16 @@
+music_search.form:
+  path: '/music-search'
+  defaults:
+    _form: '\Drupal\music_search\Form\MusicSearchForm'
+    _title: 'Music Search'
+  requirements:
+    _permission: 'access content'
+
+
+music_search.settings:
+  path: '/admin/config/music-search/settings'
+  defaults:
+    _form: '\Drupal\music_search\Form\MusicSearchSettingsForm'
+    _title: 'Music Search Settings'
+  requirements:
+    _permission: 'administer site configuration'
