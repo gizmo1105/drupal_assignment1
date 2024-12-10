@@ -7,7 +7,6 @@ music_search.search:
     _permission: 'access content'
 
 
-
 music_search.settings:
   path: '/admin/config/music-search/settings'
   defaults:
