@@ -2,21 +2,50 @@
 
 namespace Drupal\music_search;
 
-use Drupal\spotify_lookup\SpotifyLookupService;
-
+/**
+ * Generic music search service that delegates to specific services.
+ */
 class MusicSearchService {
-protected $spotifyService;
 
+  /**
+   * The array of specific search services.
+   *
+   * @var \Drupal\music_search\SearchServiceInterface[]
+   */
+  protected array $searchServices;
 
-public function __construct(SpotifyLookupService $spotifyService, DiscogsLookupService $discogsService) {
-$this->spotifyService = $spotifyService;
-}
+  /**
+   * Constructs a MusicSearchService object.
+   *
+   * @param \Drupal\music_search\SearchServiceInterface[] $searchServices
+   *   An array of specific search service instances.
+   */
+  public function __construct(array $searchServices) {
+    $this->searchServices = $searchServices;
+  }
 
-public function search($query) {
-$spotifyResults = $this->spotifyService->search($query);
+  /**
+   * Performs a search across all selected services.
+   *
+   * @param array $providers
+   *   The selected providers (e.g., ["spotify", "discogs"]).
+   * @param string $type
+   *   The type of search (e.g., "artist", "album", "song").
+   * @param string $term
+   *   The search term.
+   *
+   * @return array
+   *   A combined array of results from all providers.
+   */
+  public function search(array $providers, string $type, string $term): array {
+    $results = [];
 
-return [
-'spotify' => $spotifyResults,
-];
-}
+    foreach ($providers as $provider) {
+      if (isset($this->searchServices[$provider])) {
+        $results[$provider] = $this->searchServices[$provider]->search($type, $term);
+      }
+    }
+
+    return $results;
+  }
 }
