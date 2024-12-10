@@ -1,9 +1,8 @@
-<div class="music-search-results">
-  {% for item in results %}
-    <div class="music-search-item">
-      <h3>{{ item.title }}</h3>
-      <p>Artist: {{ item.artist }}</p>
-      <a href="{{ item.link }}">More details</a>
-    </div>
+<h2>Search Results</h2>
+<ul>
+  {% for track in results %}
+    <li>{{ track.name }} by {{ track.artists[0].name }}</li>
+  {% else %}
+    <li>No results found.</li>
   {% endfor %}
-</div>
+</ul>

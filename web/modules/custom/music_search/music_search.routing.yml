@@ -1,10 +1,11 @@
-music_search.form:
-  path: '/music-search'
+music_search.search:
+  path: '/music-search/search'
   defaults:
-    _form: '\Drupal\music_search\Form\MusicSearchForm'
-    _title: 'Music Search'
+    _controller: '\Drupal\music_search\Controller\MusicSearchController::musicSearchPage'
+    _title: 'Search for Music'
   requirements:
     _permission: 'access content'
+
 
 
 music_search.settings:
@@ -14,3 +15,4 @@ music_search.settings:
     _title: 'Music Search Settings'
   requirements:
     _permission: 'administer site configuration'
+
