@@ -4,8 +4,39 @@ namespace Drupal\music_search\Form;
 
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Messenger\MessengerInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
+/**
+ * Provides a Music Search Form.
+ */
 class MusicSearchForm extends FormBase {
+
+  /**
+   * Messenger service for sanity testing.
+   *
+   * @var MessengerInterface
+   */
+  protected $messenger;
+
+  /**
+   * Constructs a MusicSearchForm object.
+   *
+   * @param MessengerInterface $messenger
+   *   The messenger service.
+   */
+  public function __construct(MessengerInterface $messenger) {
+    $this->messenger = $messenger;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container): static {
+    return new static(
+      $container->get('messenger')
+    );
+  }
 
   /**
    * {@inheritdoc}
@@ -21,7 +52,7 @@ class MusicSearchForm extends FormBase {
     $form['search_type'] = [
       '#type' => 'radios',
       '#title' => $this->t('Search Type'),
-      '#description' => $this->t('Choose what you want to search for.'),
+      '#description' => $this->t('Choose the type to search for.'),
       '#options' => [
         'artist' => $this->t('Artist'),
         'song' => $this->t('Song'),
@@ -54,20 +85,12 @@ class MusicSearchForm extends FormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
-    // Retrieve form values
     $search_type = $form_state->getValue('search_type');
     $search_term = $form_state->getValue('search_term');
 
-    // Display the search type and term
-    drupal_set_message($this->t('You searched for a @type with the term: @term', [
-      '@type' => $search_type,
-      '@term' => $search_term,
-    ]));
-
-    // (Optional) Update the results section dynamically (useful in AJAX scenarios)
-    $form['search_results']['#markup'] = $this->t('<p>Search Type: @type</p><p>Search Term: @term</p>', [
-      '@type' => $search_type,
-      '@term' => $search_term,
-    ]);
+    // Add messages to verify form submission.
+    $this->messenger->addMessage($this->t('Form submitted successfully!'));
+    $this->messenger->addMessage($this->t('Search Type: @type', ['@type' => $search_type]));
+    $this->messenger->addMessage($this->t('Search Term: @term', ['@term' => $search_term]));
   }
 }

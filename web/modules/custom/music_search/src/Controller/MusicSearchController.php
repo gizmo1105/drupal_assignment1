@@ -42,7 +42,6 @@ class MusicSearchController extends ControllerBase {
     $form = $this->formBuilder->getForm('Drupal\music_search\Form\MusicSearchForm');
 
     return [
-      '#markup' => '<h1>' . $this->t('Music Search') . '</h1>',
       'form' => $form,
     ];
   }
