@@ -9,3 +9,6 @@ services:
     class: Drupal\music_search\MusicSearchService
     arguments:
       - { spotify: '@music_search.spotify_service', discogs: '@music_search.discogs_service' }
+  logger.channel.music_search:
+    class: Drupal\Core\Logger\LoggerChannel
+    arguments: ['music_search']

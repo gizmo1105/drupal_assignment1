@@ -1,4 +1,6 @@
 services:
-  drupal.spotify_lookup:
-    class: 'Drupal\spotify_lookup\SpotifyLookupService'
-    arguments: ['@config.factory', '@http_client']
+  music_search.spotify_service:
+    class: Drupal\music_search_spotify\SpotifySearchService
+    arguments: ['@http_client', '@logger.channel.music_search']
+    tags:
+      - { name: music_search_provider, provider: 'spotify' }
