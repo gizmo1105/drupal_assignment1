@@ -3,7 +3,7 @@
 namespace Drupal\spotify_lookup;
 
 /**
- * Parses Spotify API results into markup.
+ * Parses Spotify API results into a structured array.
  */
 class SpotifyResultParser {
 
@@ -16,7 +16,7 @@ class SpotifyResultParser {
    *   The type of items (artist, album, track).
    *
    * @return array
-   *   An array of markup strings for display.
+   *   A structured array of results for display or further use.
    */
   public function parseResults(array $items, string $type): array {
     $formattedResults = [];
@@ -24,47 +24,33 @@ class SpotifyResultParser {
 
     foreach ($items as $item) {
       // Extract main details.
-      $name = htmlspecialchars($item['name'] ?? 'Unknown', ENT_QUOTES);
+      $name = $item['name'] ?? 'Unknown';
       $image = $item['images'][0]['url'] ?? ''; // Use the first image, if available.
       $uri = $item['uri'] ?? ''; // Spotify URI.
       $id = explode(':', $uri)[2] ?? null;
-      $typeFormatted = ucfirst($type);
 
-      // Handle artists for albums or tracks.
-      $artistInfo = '';
+      // Extract artist details if available.
+      $artists = [];
       if (isset($item['artists'])) {
-        $artistLinks = [];
         foreach ($item['artists'] as $artist) {
-          $artistName = htmlspecialchars($artist['name'], ENT_QUOTES);
-          $artistUrl = $artist['external_urls']['spotify'] ?? '#';
-          $artistLinks[] = '<a href="' . htmlspecialchars($artistUrl, ENT_QUOTES) . '" target="_blank">' . $artistName . '</a>';
+          $artists[] = [
+            'name' => $artist['name'] ?? 'Unknown',
+            'url' => $artist['external_urls']['spotify'] ?? '#',
+          ];
         }
-        $artistInfo = ' by ' . implode(', ', $artistLinks);
       }
 
-      // Start constructing the markup.
-      $markup = '<li>';
-      if ($image) {
-        $markup .= '<img src="' . htmlspecialchars($image, ENT_QUOTES) . '" alt="' . $name . '" style="width:50px;height:50px;"> ';
-      }
-      $markup .= '<strong>' . $name . '</strong> (' . $typeFormatted . ')';
-
-      // Add artists and Spotify link.
-      $markup .= $artistInfo;
-      if ($id) {
-        $markup .= ' - <a href="' . $baseSpotifyUrl . '/' . $type . '/' . $id . '" target="_blank">View on Spotify</a>';
-      }
-      if ($uri) {
-        $markup .= '<br><small>URI: ' . htmlspecialchars($uri, ENT_QUOTES) . '</small>';
-      }
-      $markup .= '</li>';
-
-      // Add to results.
-      $formattedResults[] = $markup;
+      // Add the parsed data to the results.
+      $formattedResults[] = [
+        'name' => $name,
+        'image' => $image,
+        'uri' => $uri,
+        'type' => ucfirst($type),
+        'artists' => $artists,
+        'spotify_url' => $id ? $baseSpotifyUrl . '/' . $type . '/' . $id : null,
+      ];
     }
 
     return $formattedResults;
   }
 }
-
-

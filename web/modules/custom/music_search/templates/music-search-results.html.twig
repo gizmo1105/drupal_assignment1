@@ -1,0 +1,28 @@
+<h2>Search Results</h2>
+<div class="music-search-results">
+  {% if results %}
+    {% for provider, items in results %}
+      <h3>{{ provider|capitalize }}</h3>
+      <ul>
+        {% for item in items %}
+          <li>
+            <input type="radio" name="selected_item" value="{{ item.uri }}" id="{{ item.uri }}">
+            <label for="{{ item.uri }}">
+              {% if item.image %}
+                <img src="{{ item.image }}" alt="{{ item.name }}" width="50" height="50">
+              {% endif %}
+              <strong>{{ item.name }}</strong> ({{ item.type }})
+              <a href="{{ item.link }}" target="_blank">View on Spotify</a>
+            </label>
+          </li>
+        {% endfor %}
+      </ul>
+    {% endfor %}
+    <form method="post" action="{{ path('music_search.detail_query') }}">
+      <input type="hidden" name="type" value="{{ type }}">
+      <button type="submit">{{ 'Get Details'|t }}</button>
+    </form>
+  {% else %}
+    <p>{{ 'No results found.'|t }}</p>
+  {% endif %}
+</div>
