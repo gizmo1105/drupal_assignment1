@@ -1,5 +1,5 @@
 music_search.page:
-  path: '/music-search/search'
+  path: '/music-search/searc'
   defaults:
     _controller: 'Drupal\music_search\Controller\MusicSearchController::musicSearchPage'
     _title: 'Music Search'
