@@ -9,13 +9,14 @@ use Drupal\Core\Form\FormBuilderInterface;
 class MusicSearchController extends ControllerBase {
 
   /**
-   * @var \Drupal\Core\Form\FormBuilderInterface
+   * @var FormBuilderInterface
    */
   protected $formBuilder;
 
   /**
    * Constructor.
    *
+   * @param FormBuilderInterface $formBuilder
    * @param \Drupal\Core\Form\FormBuilderInterface $formBuilder
    *   The form builder service.
    */

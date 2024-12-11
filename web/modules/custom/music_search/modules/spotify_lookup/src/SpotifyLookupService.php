@@ -80,6 +80,7 @@ class SpotifyLookupService implements SearchServiceInterface {
         ],
       ]);
 
+
       // Decode the JSON response.
       $data = json_decode($response->getBody(), TRUE);
 
@@ -91,7 +92,9 @@ class SpotifyLookupService implements SearchServiceInterface {
     }
     catch (GuzzleException $e) {
       \Drupal::logger('spotify_lookup')->error('Spotify API error: @message', ['@message' => $e->getMessage()]);
+
       return [];
     }
   }
 }
+

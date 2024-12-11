@@ -81,6 +81,7 @@ class MusicSearchForm extends FormBase {
     $form['search_term'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Search Term'),
+      '#description' => $this->t('Enter the term to search for.'),
       '#required' => TRUE,
     ];
 
