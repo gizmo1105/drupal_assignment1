@@ -20,6 +20,13 @@ class MusicSearchForm extends FormBase {
   protected MusicSearchService $musicSearchService;
 
   /**
+   * The search results.
+   *
+   * @var array
+   */
+  protected array $searchResults = [];
+
+  /**
    * Constructs a MusicSearchForm object.
    *
    * @param \Drupal\music_search\MusicSearchService $musicSearchService
@@ -82,24 +89,48 @@ class MusicSearchForm extends FormBase {
       '#value' => $this->t('Search'),
     ];
 
+    // If results exist, display them
+    if (!empty($this->searchResults)) {
+      $resultMarkup = '<h2>' . $this->t('Search Results') . '</h2>';
+
+      foreach ($this->searchResults as $provider => $results) {
+        $resultMarkup .= '<h3>' . ucfirst($provider) . '</h3>';
+        $resultMarkup .= '<ul>';
+
+        foreach ($results as $item) {
+          $name = $item['name'] ?? $this->t('Unknown');
+          $url = $item['external_urls']['spotify'] ?? '#';
+          $image = $item['images'][0]['url'] ?? '';
+
+          $resultMarkup .= '<li>';
+          if ($image) {
+            $resultMarkup .= '<img src="' . $image . '" alt="' . $name . '" style="width:50px;height:50px;"> ';
+          }
+          $resultMarkup .= '<a href="' . $url . '" target="_blank">' . $name . '</a>';
+          $resultMarkup .= '</li>';
+        }
+
+        $resultMarkup .= '</ul>';
+      }
+
+      $form['search_results'] = [
+        '#type' => 'markup',
+        '#markup' => $resultMarkup,
+      ];
+    }
+
     return $form;
   }
 
-  /**
-   * {@inheritdoc}
-   */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $providers = array_filter($form_state->getValue('providers'));
     $search_type = $form_state->getValue('search_type');
     $search_term = $form_state->getValue('search_term');
 
-    $results = $this->musicSearchService->search($providers, $search_type, $search_term);
+    // Perform the search
+    $this->searchResults = $this->musicSearchService->search($providers, $search_type, $search_term);
 
-    foreach ($results as $provider => $provider_results) {
-      $this->messenger()->addMessage($this->t('Results from @provider: @count results.', [
-        '@provider' => ucfirst($provider),
-        '@count' => count($provider_results),
-      ]));
-    }
+    // Rebuild the form to display results
+    $form_state->setRebuild(TRUE);
   }
 }
