@@ -27,16 +27,26 @@ class SpotifyLookupService implements SearchServiceInterface {
   protected ConfigFactoryInterface $configFactory;
 
   /**
+   * The Spotify result parser.
+   *
+   * @var \Drupal\spotify_lookup\SpotifyResultParser
+   */
+  protected SpotifyResultParser $resultParser;
+
+  /**
    * Constructs a SpotifyLookupService object.
    *
    * @param \GuzzleHttp\ClientInterface $httpClient
    *   The HTTP client.
    * @param \Drupal\Core\Config\ConfigFactoryInterface $configFactory
    *   The configuration factory.
+   * @param \Drupal\spotify_lookup\SpotifyResultParser $resultParser
+   *   The result parser service.
    */
-  public function __construct(ClientInterface $httpClient, ConfigFactoryInterface $configFactory) {
+  public function __construct(ClientInterface $httpClient, ConfigFactoryInterface $configFactory, SpotifyResultParser $resultParser) {
     $this->httpClient = $httpClient;
     $this->configFactory = $configFactory;
+    $this->resultParser = $resultParser;
   }
 
   /**
@@ -73,8 +83,11 @@ class SpotifyLookupService implements SearchServiceInterface {
       // Decode the JSON response.
       $data = json_decode($response->getBody(), TRUE);
 
-      // Return the relevant part of the response.
-      return $data["{$spotifyType}s"]['items'] ?? [];
+      // Extract the items for the specified type.
+      $items = $data["{$spotifyType}s"]['items'] ?? [];
+
+      // Use the parser to generate markup.
+      return $this->resultParser->parseResults($items, $spotifyType);
     }
     catch (GuzzleException $e) {
       \Drupal::logger('spotify_lookup')->error('Spotify API error: @message', ['@message' => $e->getMessage()]);

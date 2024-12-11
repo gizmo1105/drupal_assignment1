@@ -4,6 +4,7 @@ services:
     arguments:
       - '@http_client'
       - '@config.factory'
+      - '@music_search.spotify_lookup.result_parser'
 
   music_search.discogs_service:
     class: Drupal\music_search\DiscogsMockService

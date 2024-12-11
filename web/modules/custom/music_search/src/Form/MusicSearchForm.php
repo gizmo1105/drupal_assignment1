@@ -15,21 +15,21 @@ class MusicSearchForm extends FormBase {
   /**
    * The music search service.
    *
-   * @var \Drupal\music_search\MusicSearchService
+   * @var MusicSearchService
    */
   protected MusicSearchService $musicSearchService;
 
   /**
-   * The search results.
+   * The search results markup.
    *
    * @var array
    */
-  protected array $searchResults = [];
+  protected array $searchResultsMarkup = [];
 
   /**
    * Constructs a MusicSearchForm object.
    *
-   * @param \Drupal\music_search\MusicSearchService $musicSearchService
+   * @param MusicSearchService $musicSearchService
    *   The music search service.
    */
   public function __construct(MusicSearchService $musicSearchService) {
@@ -89,28 +89,16 @@ class MusicSearchForm extends FormBase {
       '#value' => $this->t('Search'),
     ];
 
-    // If results exist, display them
-    if (!empty($this->searchResults)) {
-      $resultMarkup = '<h2>' . $this->t('Search Results') . '</h2>';
+    // If results exist, display them.
+    // If results exist, display them.
+    if (!empty($this->searchResultsMarkup)) {
+      $resultMarkup = '';
 
-      foreach ($this->searchResults as $provider => $results) {
-        $resultMarkup .= '<h3>' . ucfirst($provider) . '</h3>';
-        $resultMarkup .= '<ul>';
-
-        foreach ($results as $item) {
-          $name = $item['name'] ?? $this->t('Unknown');
-          $url = $item['external_urls']['spotify'] ?? '#';
-          $image = $item['images'][0]['url'] ?? '';
-
-          $resultMarkup .= '<li>';
-          if ($image) {
-            $resultMarkup .= '<img src="' . $image . '" alt="' . $name . '" style="width:50px;height:50px;"> ';
-          }
-          $resultMarkup .= '<a href="' . $url . '" target="_blank">' . $name . '</a>';
-          $resultMarkup .= '</li>';
+      foreach ($this->searchResultsMarkup as $provider => $providerMarkup) {
+        if (!empty($providerMarkup)) {
+          $resultMarkup .= '<h3>' . ucfirst($provider) . '</h3>';
+          $resultMarkup .= '<ul>' . implode('', $providerMarkup) . '</ul>';
         }
-
-        $resultMarkup .= '</ul>';
       }
 
       $form['search_results'] = [
@@ -122,15 +110,18 @@ class MusicSearchForm extends FormBase {
     return $form;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $providers = array_filter($form_state->getValue('providers'));
     $search_type = $form_state->getValue('search_type');
     $search_term = $form_state->getValue('search_term');
 
-    // Perform the search
-    $this->searchResults = $this->musicSearchService->search($providers, $search_type, $search_term);
+    // Perform the search and get ready-to-display markup.
+    $this->searchResultsMarkup = $this->musicSearchService->search($providers, $search_type, $search_term);
 
-    // Rebuild the form to display results
+    // Rebuild the form to display results.
     $form_state->setRebuild(TRUE);
   }
 }

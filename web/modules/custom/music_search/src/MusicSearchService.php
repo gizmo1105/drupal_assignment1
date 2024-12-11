@@ -10,14 +10,14 @@ class MusicSearchService {
   /**
    * The array of specific search services.
    *
-   * @var \Drupal\music_search\SearchServiceInterface[]
+   * @var SearchServiceInterface[]
    */
   protected array $searchServices;
 
   /**
    * Constructs a MusicSearchService object.
    *
-   * @param \Drupal\music_search\SearchServiceInterface[] $searchServices
+   * @param SearchServiceInterface[] $searchServices
    *   An array of specific search service instances.
    */
   public function __construct(array $searchServices) {

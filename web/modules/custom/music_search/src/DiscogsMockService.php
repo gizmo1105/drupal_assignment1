@@ -11,10 +11,12 @@ class DiscogsMockService implements SearchServiceInterface {
    * {@inheritdoc}
    */
   public function search(string $type, string $term): array {
-    // Mocked response.
-    return [
-      ['title' => "Mocked Discogs $type 1: $term"],
-      ['title' => "Mocked Discogs $type 2: $term"],
+    // Mocked markup response.
+    $mockResults = [
+        'markup' => '<li><strong>Mocked Discogs ' . htmlspecialchars($type, ENT_QUOTES) . ' 1</strong>: ' . htmlspecialchars($term, ENT_QUOTES) . '</li>',
+        'markup' => '<li><strong>Mocked Discogs ' . htmlspecialchars($type, ENT_QUOTES) . ' 2</strong>: ' . htmlspecialchars($term, ENT_QUOTES) . '</li>',
     ];
+
+    return $mockResults;
   }
 }
