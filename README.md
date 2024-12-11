@@ -4,6 +4,11 @@
 - Gissur Már Jónsson
 - Hallgrímur Jónas Jensson
 
+## Getting the files:
+```bash
+git clone https://github.com/FuadPoroshtica/drupal_assignment2.git
+cd drupal_assignment2
+```
 
 ## Run for the first time:
 
