@@ -9,12 +9,41 @@
 git clone https://github.com/FuadPoroshtica/drupal_assignment2.git
 cd drupal_assignment2
 ```
+## Adding the Files Folder to `web/sites/default/`
+
+Follow these steps to add the `files` folder to `web/sites/default/`:
+
+1. **Download**:
+   - Get `Files.zip` from this link:
+     [Download Files.zip](https://github.com/FuadPoroshtica/drupal_assignment2/releases/download/media/Files.zip)
+
+2. **Extract**:
+   - Extract `Files.zip` to create a folder named `files`.
+
+3. **Move**:
+   - Place the `files` folder in `web/sites/default/`.
+     
+     Final structure:
+     ```
+     web/
+       sites/
+         default/
+           files/
+     ```
+
+4. **Verify**:
+   - Check your Drupal site to confirm the `files` folder is accessible.
+
+5. **Back to run**:
+   - Go back to root of the drupal_assignment2
+
+
 
 ## Run for the first time:
 
 ### First Step:
 ```bash
-ddev composer
+ddev composer install
 ```
 ### Second Step:
 ```bash
