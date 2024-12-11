@@ -9,7 +9,7 @@
 git clone https://github.com/FuadPoroshtica/drupal_assignment2.git
 cd drupal_assignment2
 ```
-## Adding the Files Folder to `web/sites/default/`
+### Adding the Files Folder to `web/sites/default/`
 
 Follow these steps to add the `files` folder to `web/sites/default/`:
 
