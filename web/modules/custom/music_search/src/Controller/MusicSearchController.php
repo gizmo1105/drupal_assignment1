@@ -17,6 +17,7 @@ class MusicSearchController extends ControllerBase {
    * Constructor.
    *
    * @param FormBuilderInterface $formBuilder
+   * @param \Drupal\Core\Form\FormBuilderInterface $formBuilder
    *   The form builder service.
    */
   public function __construct(FormBuilderInterface $formBuilder) {
@@ -46,5 +47,3 @@ class MusicSearchController extends ControllerBase {
     ];
   }
 }
-
-

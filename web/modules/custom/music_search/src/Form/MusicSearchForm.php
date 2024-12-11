@@ -4,29 +4,36 @@ namespace Drupal\music_search\Form;
 
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Messenger\MessengerInterface;
+use Drupal\music_search\MusicSearchService;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Provides a Music Search Form.
+ * Provides the Music Search Form.
  */
 class MusicSearchForm extends FormBase {
 
   /**
-   * Messenger service.
+   * The music search service.
    *
-   * @var MessengerInterface
+   * @var MusicSearchService
    */
-  protected $messenger;
+  protected MusicSearchService $musicSearchService;
+
+  /**
+   * The search results markup.
+   *
+   * @var array
+   */
+  protected array $searchResultsMarkup = [];
 
   /**
    * Constructs a MusicSearchForm object.
    *
-   * @param MessengerInterface $messenger
-   *   The messenger service.
+   * @param MusicSearchService $musicSearchService
+   *   The music search service.
    */
-  public function __construct(MessengerInterface $messenger) {
-    $this->messenger = $messenger;
+  public function __construct(MusicSearchService $musicSearchService) {
+    $this->musicSearchService = $musicSearchService;
   }
 
   /**
@@ -34,7 +41,7 @@ class MusicSearchForm extends FormBase {
    */
   public static function create(ContainerInterface $container): static {
     return new static(
-      $container->get('messenger')
+      $container->get('music_search.service')
     );
   }
 
@@ -49,14 +56,23 @@ class MusicSearchForm extends FormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
+    $form['providers'] = [
+      '#type' => 'checkboxes',
+      '#title' => $this->t('Search Providers'),
+      '#options' => [
+        'spotify' => $this->t('Spotify'),
+        'discogs' => $this->t('Discogs'),
+      ],
+      '#required' => TRUE,
+    ];
+
     $form['search_type'] = [
       '#type' => 'radios',
       '#title' => $this->t('Search Type'),
-      '#description' => $this->t('Choose the type to search for.'),
       '#options' => [
         'artist' => $this->t('Artist'),
-        'song' => $this->t('Song'),
         'album' => $this->t('Album'),
+        'song' => $this->t('Song'),
       ],
       '#default_value' => 'artist',
       '#required' => TRUE,
@@ -74,9 +90,23 @@ class MusicSearchForm extends FormBase {
       '#value' => $this->t('Search'),
     ];
 
-    $form['search_results'] = [
-      '#markup' => '<div id="search-results">' . $this->t('Search results will appear here after you submit the form.') . '</div>',
-    ];
+    // If results exist, display them.
+    // If results exist, display them.
+    if (!empty($this->searchResultsMarkup)) {
+      $resultMarkup = '';
+
+      foreach ($this->searchResultsMarkup as $provider => $providerMarkup) {
+        if (!empty($providerMarkup)) {
+          $resultMarkup .= '<h3>' . ucfirst($provider) . '</h3>';
+          $resultMarkup .= '<ul>' . implode('', $providerMarkup) . '</ul>';
+        }
+      }
+
+      $form['search_results'] = [
+        '#type' => 'markup',
+        '#markup' => $resultMarkup,
+      ];
+    }
 
     return $form;
   }
@@ -85,13 +115,14 @@ class MusicSearchForm extends FormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
+    $providers = array_filter($form_state->getValue('providers'));
     $search_type = $form_state->getValue('search_type');
     $search_term = $form_state->getValue('search_term');
 
-    // Add messages to verify form submission.
-    $this->messenger->addMessage($this->t('Form submitted successfully!'));
-    $this->messenger->addMessage($this->t('Search Type: @type', ['@type' => $search_type]));
-    $this->messenger->addMessage($this->t('Search Term: @term', ['@term' => $search_term]));
+    // Perform the search and get ready-to-display markup.
+    $this->searchResultsMarkup = $this->musicSearchService->search($providers, $search_type, $search_term);
+
+    // Rebuild the form to display results.
+    $form_state->setRebuild(TRUE);
   }
 }
-
