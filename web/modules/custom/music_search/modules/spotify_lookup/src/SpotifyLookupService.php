@@ -3,56 +3,67 @@ namespace Drupal\spotify_lookup;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
 use GuzzleHttp\Client;
-use GuzzleHttp\Exception\GuzzleException;
 
+/**
+ * Service to interact with the Spotify API.
+ */
 class SpotifyLookupService {
 
-  protected $configFactory;
-  protected $httpClient;
-  private $client;
-  private $apiKey;
+  protected ConfigFactoryInterface $configFactory;
+  protected Client $httpClient;
+  private mixed $apiKey;
 
+  /**
+   * Constructs the SpotifyLookupService.
+   */
   public function __construct(ConfigFactoryInterface $config_factory, Client $client) {
     $this->configFactory = $config_factory;
     $this->httpClient = $client;
+
     // Load the API key from configuration.
     $config = $this->configFactory->get('spotify_lookup.settings');
     $this->apiKey = $config->get('api_key');
+
+    if (empty($this->apiKey)) {
+      \Drupal::logger('spotify_lookup')->error('Spotify API key is missing. Please configure it in the settings.');
+    }
   }
 
-  // Function to search for a track on Spotify
-  public function searchTrack($track_name) {
-    // Spotify search API URL
+  /**
+   * Performs a search on Spotify.
+   *
+   * @param string $query
+   *   The search query.
+   * @param string $type
+   *   The type of content to search for. Possible values: 'track', 'album', 'artist'.
+   *
+   * @return array
+   *   The search results or an empty array in case of an error.
+   */
+  public function search(string $query, string $type = 'track'): array {
     $url = 'https://api.spotify.com/v1/search';
 
-    // Send request to Spotify API
     try {
       $response = $this->httpClient->get($url, [
         'query' => [
-          'q' => $track_name,
-          'type' => 'track',
+          'q' => $query,
+          'type' => $type,
         ],
         'headers' => [
           'Authorization' => 'Bearer ' . $this->apiKey,
         ],
       ]);
 
-      // Decode the JSON response
+      // Decode the JSON response and return the relevant data.
       $data = json_decode($response->getBody(), TRUE);
-      return $data['tracks']['items']; // Return list of tracks
+      return $data[$type . 's']['items'] ?? [];
     }
     catch (\Exception $e) {
-      // Handle any errors (e.g., invalid API key or request issue)
-      \Drupal::logger('music_search')->error('Error fetching Spotify data: ' . $e->getMessage());
-      return [];
-    } catch (GuzzleException $e) {
+      \Drupal::logger('spotify_lookup')->error('Error fetching Spotify data: ' . $e->getMessage());
       return [];
     }
   }
-
-  public function search($query) {
-    // TODO: Implement the search function
-  }
 }
+
 
 

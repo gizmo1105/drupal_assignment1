@@ -1,8 +1,8 @@
-music_search.search:
-  path: '/music-search/search'
+music_search.page:
+  path: '/music-search'
   defaults:
-    _controller: '\Drupal\music_search\Controller\MusicSearchController::musicSearchPage'
-    _title: 'Search for Music'
+    _controller: 'Drupal\music_search\Controller\MusicSearchController::musicSearchPage'
+    _title: 'Music Search'
   requirements:
     _permission: 'access content'
 
