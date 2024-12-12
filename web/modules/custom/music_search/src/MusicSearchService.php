@@ -48,4 +48,14 @@ class MusicSearchService {
 
     return $results;
   }
+
+  public function getDetails(array $params): array {
+    $results = [];
+
+    if (isset($this->searchServices[$params['provider']])) {
+      $results[$params['provider']] = $this->searchServices[$params['provider']]->getDetails($params);
+    }
+
+    return $results;
+  }
 }

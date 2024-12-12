@@ -19,4 +19,6 @@ interface SearchServiceInterface {
    *   An array of search results.
    */
   public function search(string $type, string $term): array;
+
+  public function getDetails(array $params): array;
 }

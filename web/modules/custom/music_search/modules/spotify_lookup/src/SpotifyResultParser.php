@@ -53,4 +53,48 @@ class SpotifyResultParser {
 
     return $formattedResults;
   }
+
+  public function parseDetails(array $item, string $type): array {
+    return match ($type) {
+      'Artist' => $this->parseArtistDetails($item),
+      'Album' => $this->parseAlbumDetails($item),
+      'Track' => $this->parseTrackDetails($item),
+      default => [],
+    };
+
+  }
+
+  private function parseArtistDetails(array $item): array {
+    $result = [
+      'name' => $item['name'] ?? null,
+      'image' => isset($item['images'][0]['url']) ? $item['images'][0]['url'] : null,
+      'url' => $item['external_urls']['spotify'] ?? null,
+      'type' => 'artist'
+    ];
+    return $result;
+  }
+
+  private function parseTrackDetails(array $item): array {
+    $result = [
+      'type' => 'song'
+    ];
+    return $result;
+  }
+
+  private function parseAlbumDetails(array $item): array {
+    $result = [
+      'name' => $item['name'] ?? null,
+      'release_date' => $item['release_date'] ?? null,
+      'artists' => $item['artists']?? null,
+      'tracks' => $item['tracks']?? null,
+      'date' => $item['external_urls']['spotify'] ?? null,
+      'label' => $item['label'] ?? null,
+      'genres' => $item['genres'] ?? null,
+      'image' => isset($item['images'][0]['url']) ? $item['images'][0]['url'] : null,
+      'type' => 'album'
+    ];
+    return [];
+  }
 }
+
+
