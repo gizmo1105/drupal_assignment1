@@ -76,6 +76,11 @@ class SpotifyResultParser {
 
   private function parseTrackDetails(array $item): array {
     $result = [
+      'name' => $item['name'],
+      'album' => $item['album']['name'] ?? null,
+      'artists' => $item['artists'] ?? null,
+      'duration' => $item['duration_ms'] ?? null,
+      'spotify_id' => $item['id'] ?? null,
       'type' => 'song'
     ];
     return $result;
@@ -93,7 +98,7 @@ class SpotifyResultParser {
       'image' => isset($item['images'][0]['url']) ? $item['images'][0]['url'] : null,
       'type' => 'album'
     ];
-    return [];
+    return $result;
   }
 }
 
