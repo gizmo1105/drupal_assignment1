@@ -79,6 +79,9 @@ class MusicSearchResultsController extends ControllerBase {
     return [
       '#theme' => 'music_search_results',
       '#results' => $results,
+      '#cache' => [
+        'max-age' => 0,
+      ],
     ];
   }
 
@@ -105,6 +108,9 @@ class MusicSearchResultsController extends ControllerBase {
     return [
       '#theme' => 'music_search_item_detail',
       '#details' => $details['spotify'],
+      '#cache' => [
+        'max-age' => 0,
+      ],
     ];
   }
 }
