@@ -19,4 +19,13 @@ class DiscogsMockService implements SearchServiceInterface {
 
     return $mockResults;
   }
+
+  public function getDetails(array $params): array
+  {
+    $mockResults = [
+      'markup' => '<li><strong>Mocked Discogs ' . htmlspecialchars($params['type'], ENT_QUOTES) . ' 1</strong>: ' . htmlspecialchars($params['uri'], ENT_QUOTES) . '</li>',
+      'markup' => '<li><strong>Mocked Discogs ' . htmlspecialchars($params['type'], ENT_QUOTES) . ' 2</strong>: ' . htmlspecialchars($params['uri'], ENT_QUOTES) . '</li>',
+    ];
+    return $mockResults;
+  }
 }

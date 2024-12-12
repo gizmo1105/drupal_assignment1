@@ -86,23 +86,25 @@ class MusicSearchResultsController extends ControllerBase {
    * Handles the detail query for a selected item.
    */
   public function detailQuery(): array {
-    $request = \Drupal::request();
-    $selectedUri = $request->request->get('selected_item'); // Get the selected URI.
-    $type = $request->request->get('type'); // Get the type (e.g., artist, album).
+    // Fetches all queries from the current request.
+    $params = \Drupal::request()->query->all();
 
-    if (!$selectedUri || !$type) {
+
+    if (!$params) {
       return [
         '#markup' => $this->t('No item selected.'),
       ];
     }
 
-    // Use the selected URI to perform another query.
-    $details = $this->musicSearchService->getDetails($type, $selectedUri);
+    \Drupal::logger('music_search')->notice('Params received: <pre>@params</pre>', ['@params' => print_r($params, TRUE)]);
 
+    $details = $this->musicSearchService->getDetails($params);
+
+    \Drupal::logger('music_search')->notice('Details received: <pre>@details</pre>', ['@details' => print_r($details, TRUE)]);
     // Render the details on a new page.
     return [
       '#theme' => 'music_search_item_detail',
-      '#details' => $details,
+      '#details' => $details['spotify'],
     ];
   }
 }
