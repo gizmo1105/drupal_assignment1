@@ -2,6 +2,7 @@
 - Gissur Már Jónsson
 
 ## Getting the files:
+
 ```bash
 git clone https://github.com/FuadPoroshtica/drupal_assignment2.git
 cd drupal_assignment2

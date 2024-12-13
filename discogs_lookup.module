@@ -1,0 +1,15 @@
+<?php
+
+/**
+ * Implements hook_theme().
+ */
+function discogs_lookup_theme() {
+  return [
+    'discogs_lookup_results' => [
+      'variables' => [
+        'results' => [],
+        'query' => NULL,
+      ],
+    ],
+  ];
+} 
