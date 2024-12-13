@@ -99,8 +99,6 @@ class MusicSearchResultsController extends ControllerBase {
       ];
     }
 
-    \Drupal::logger('music_search')->notice('Params received: <pre>@params</pre>', ['@params' => print_r($params, TRUE)]);
-
     $details = $this->musicSearchService->getDetails($params);
 
     \Drupal::logger('music_search')->notice('Details received: <pre>@details</pre>', ['@details' => print_r($details, TRUE)]);
