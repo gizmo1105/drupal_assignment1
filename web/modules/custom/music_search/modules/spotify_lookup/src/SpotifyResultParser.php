@@ -77,8 +77,7 @@ class SpotifyResultParser {
   private function parseTrackDetails(array $item): array {
     $result = [
       'name' => $item['name'],
-      'album' => $item['album']['name'] ?? null,
-      'artists' => $item['artists'] ?? null,
+      'artists' => $item['artists'][0]['name'] ?? null,
       'duration' => $item['duration_ms'] ?? null,
       'spotify_id' => $item['id'] ?? null,
       'type' => 'song'
@@ -87,15 +86,21 @@ class SpotifyResultParser {
   }
 
   private function parseAlbumDetails(array $item): array {
+    $tracks = [];
+    if (!empty($item['tracks']['items'])) {
+      foreach($item['tracks']['items'] as $track) {
+        $tracks[] = $track['name'];
+      }
+    }
+
     $result = [
       'name' => $item['name'] ?? null,
       'release_date' => $item['release_date'] ?? null,
-      'artists' => $item['artists']?? null,
-      'tracks' => $item['tracks']?? null,
+      'artists' => $item['artists'][0]['name'] ?? null,
       'date' => $item['external_urls']['spotify'] ?? null,
       'label' => $item['label'] ?? null,
       'genres' => $item['genres'] ?? null,
-      'image' => isset($item['images'][0]['url']) ? $item['images'][0]['url'] : null,
+      'image' => $item['images'][0]['url'] ?? null,
       'type' => 'album'
     ];
     return $result;
