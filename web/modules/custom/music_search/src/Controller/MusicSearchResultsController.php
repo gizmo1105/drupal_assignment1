@@ -82,6 +82,11 @@ class MusicSearchResultsController extends ControllerBase {
       '#cache' => [
         'max-age' => 0,
       ],
+      '#attached' => [
+        'library' => [
+          'music_search/music_search_results_css',
+        ],
+      ],
     ];
   }
 
