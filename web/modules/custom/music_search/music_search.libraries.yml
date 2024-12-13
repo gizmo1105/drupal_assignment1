@@ -1,0 +1,5 @@
+entity_field_selector_css:
+  version: 1.x
+  css:
+    theme:
+      css/entity_field_selector.css: {}

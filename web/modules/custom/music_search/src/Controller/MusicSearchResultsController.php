@@ -99,12 +99,36 @@ class MusicSearchResultsController extends ControllerBase {
     \Drupal::logger('music_search')->notice('Params received: <pre>@params</pre>', ['@params' => print_r($params, TRUE)]);
 
     $details = $this->musicSearchService->getDetails($params);
-
+    if (empty($details['spotify'])) {
+      return [
+        '#markup' => $this->t('No details found for this item.'),
+      ];
+    }
+    $entity_type = $details['spotify']['entity_type'] ?? 'album';
     \Drupal::logger('music_search')->notice('Details received: <pre>@details</pre>', ['@details' => print_r($details, TRUE)]);
     // Render the details on a new page.
-    return [
-      '#theme' => 'music_search_item_detail',
-      '#details' => $details['spotify'],
+    // Dummy Discogs data for testing.
+
+    $details['discogs'] = [
+      'name' => 'Discogs Artist Name',
+      'genres' => ['Electro', 'Experimental'],
+      'profile' => 'A famous artist known for blending genres like pop and electronic music.',
+      'image_url' => 'https://discogs.com/artist-image.jpg',
     ];
+
+    return [
+      '#theme' => 'entity_field_selector',
+      '#entity_type' => $entity_type,
+      '#details' => $details,
+      '#attached' => [
+        'library' => [
+          'music_search/entity_field_selector_css',
+        ],
+      ],
+    ];
+    //return [
+    //  '#theme' => 'music_search_item_detail',
+    //  '#details' => $details['spotify'],
+    //];
   }
 }
