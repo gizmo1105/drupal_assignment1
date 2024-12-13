@@ -4,36 +4,28 @@ namespace Drupal\music_search\Form;
 
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\music_search\MusicSearchService;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 /**
  * Provides the Music Search Form.
  */
 class MusicSearchForm extends FormBase {
-
   /**
-   * The music search service.
+   * Session service for persisting searches.
    *
-   * @var MusicSearchService
+   * @var SessionInterface
    */
-  protected MusicSearchService $musicSearchService;
-
-  /**
-   * The search results markup.
-   *
-   * @var array
-   */
-  protected array $searchResultsMarkup = [];
+  protected SessionInterface $session;
 
   /**
    * Constructs a MusicSearchForm object.
    *
-   * @param MusicSearchService $musicSearchService
-   *   The music search service.
+   * @param SessionInterface $session
+   *   The session service.
    */
-  public function __construct(MusicSearchService $musicSearchService) {
-    $this->musicSearchService = $musicSearchService;
+  public function __construct(SessionInterface $session) {
+    $this->session = $session;
   }
 
   /**
@@ -41,9 +33,10 @@ class MusicSearchForm extends FormBase {
    */
   public static function create(ContainerInterface $container): static {
     return new static(
-      $container->get('music_search.service')
+      $container->get('session')
     );
   }
+
 
   /**
    * {@inheritdoc}
@@ -90,24 +83,6 @@ class MusicSearchForm extends FormBase {
       '#value' => $this->t('Search'),
     ];
 
-    // If results exist, display them.
-    // If results exist, display them.
-    if (!empty($this->searchResultsMarkup)) {
-      $resultMarkup = '';
-
-      foreach ($this->searchResultsMarkup as $provider => $providerMarkup) {
-        if (!empty($providerMarkup)) {
-          $resultMarkup .= '<h3>' . ucfirst($provider) . '</h3>';
-          $resultMarkup .= '<ul>' . implode('', $providerMarkup) . '</ul>';
-        }
-      }
-
-      $form['search_results'] = [
-        '#type' => 'markup',
-        '#markup' => $resultMarkup,
-      ];
-    }
-
     return $form;
   }
 
@@ -115,14 +90,26 @@ class MusicSearchForm extends FormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
+    // Get values from the search form.
+    $searchType = $form_state->getValue('search_type');
+    $searchTerm = $form_state->getValue('search_term');
     $providers = array_filter($form_state->getValue('providers'));
-    $search_type = $form_state->getValue('search_type');
-    $search_term = $form_state->getValue('search_term');
 
-    // Perform the search and get ready-to-display markup.
-    $this->searchResultsMarkup = $this->musicSearchService->search($providers, $search_type, $search_term);
+    // Store search parameters in session.
+    $this->session->set('music_search.search_params', [
+      'type' => $searchType,
+      'term' => $searchTerm,
+      'providers' => $providers,
+    ]);
 
-    // Rebuild the form to display results.
-    $form_state->setRebuild(TRUE);
+    // Insert parameters into query for the redirect.
+    $query = [
+      'type' => $searchType,
+      'term' => $searchTerm,
+      'providers' => implode(',', $providers),
+    ];
+
+    // Redirect to the results page with query parameters.
+    $form_state->setRedirect('music_search.results', [], ['query' => $query]);
   }
 }

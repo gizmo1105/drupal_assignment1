@@ -29,5 +29,11 @@ function music_search_theme() {
         'results' => [],
       ],
     ],
+    'music_search_item_detail' => [
+      'variables' => [
+        'details' => [],
+      ],
+    ],
   ];
 }
+
