@@ -128,6 +128,7 @@ class MusicSearchResultsController extends ControllerBase {
         'library' => [
           'music_search/entity_field_selector_css',
         ],
+      ],
     ];
     //return [
     //  '#theme' => 'music_search_item_detail',
