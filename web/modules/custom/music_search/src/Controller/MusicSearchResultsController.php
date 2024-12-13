@@ -79,6 +79,9 @@ class MusicSearchResultsController extends ControllerBase {
     return [
       '#theme' => 'music_search_results',
       '#results' => $results,
+      '#cache' => [
+        'max-age' => 0,
+      ],
     ];
   }
 
@@ -95,8 +98,6 @@ class MusicSearchResultsController extends ControllerBase {
         '#markup' => $this->t('No item selected.'),
       ];
     }
-
-    \Drupal::logger('music_search')->notice('Params received: <pre>@params</pre>', ['@params' => print_r($params, TRUE)]);
 
     $details = $this->musicSearchService->getDetails($params);
     if (empty($details['spotify'])) {
@@ -120,11 +121,13 @@ class MusicSearchResultsController extends ControllerBase {
       '#theme' => 'entity_field_selector',
       '#entity_type' => $entity_type,
       '#details' => $details,
+      '#cache' => [
+        'max-age' => 0,
+        ],
       '#attached' => [
         'library' => [
           'music_search/entity_field_selector_css',
         ],
-      ],
     ];
     //return [
     //  '#theme' => 'music_search_item_detail',
