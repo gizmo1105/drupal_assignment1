@@ -1,0 +1,22 @@
+{% if query %}
+  <h2>{{ 'Search results for "@query"'|t({'@query': query}) }}</h2>
+  
+  {% if results %}
+    <div class="discogs-results">
+      {% for result in results %}
+        <div class="discogs-result">
+          {% if result.thumb %}
+            <img src="{{ result.thumb }}" alt="{{ result.title }}">
+          {% endif %}
+          <h3>{{ result.title }}</h3>
+          <p>{{ result.year }}</p>
+          <p>{{ result.label|join(', ') }}</p>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p>{{ 'No results found.'|t }}</p>
+  {% endif %}
+{% else %}
+  <p>{{ 'Enter a search term to find music releases.'|t }}</p>
+{% endif %} 

@@ -1,0 +1,4 @@
+administer discogs lookup:
+  title: 'Administer Discogs Lookup settings'
+  description: 'Allow users to modify Discogs API settings'
+  restrict access: true 

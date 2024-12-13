@@ -1,0 +1,15 @@
+discogs_lookup.settings:
+  path: '/admin/config/services/discogs-lookup'
+  defaults:
+    _form: '\Drupal\discogs_lookup\Form\DiscogsLookupSettingsForm'
+    _title: 'Discogs Lookup Settings'
+  requirements:
+    _permission: 'administer discogs lookup'
+
+discogs_lookup.search:
+  path: '/discogs-lookup/search'
+  defaults:
+    _controller: '\Drupal\discogs_lookup\Controller\DiscogsLookupController::search'
+    _title: 'Search Discogs'
+  requirements:
+    _permission: 'access content' 
