@@ -135,4 +135,13 @@ class MusicSearchResultsController extends ControllerBase {
     //  '#details' => $details['spotify'],
     //];
   }
+
+  /*
+   * Helper function to save values temporarily in session.
+   */
+  public function setSessionValue($key, $value) {
+    $this->session->set($key, $value);
+  }
 }
+
+
